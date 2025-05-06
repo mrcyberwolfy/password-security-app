@@ -1,23 +1,22 @@
-# Password Strength Checker 🔐
+# Preveri moč vašega gesla 🔐
+Spletna aplikacija, ki preveri varnost vašega gesla in oceni, koliko časa bi potreboval napadalec, da ga razbije.
 
-Web application that helps you analyze how strong your password is and how long it would take for a hacker to crack it.
+## Predogled
 ![Preview](https://github.com/mrcyberwolfy/password-security-app/blob/0b95a8cb4b641081b7c4af5e090370bad770089e/static/github%20project.jpg)
 
-## Features
-- Real-time analysis of character types (uppercase, numbers, symbols)
-- Password strength rating and crack time estimation
-- Secure: does not store or send passwords
-- Interactive feedback with tips for improvement
-- Password generator
-- Slovenian language UI 🇸🇮
+## Funkcionalost
+- Analiza gesla v realnem času (male/velike črke, številke, simboli)
+- Ocena varnosti in izračun časa za razbitje
+- Brez beleženja gesel – analiza je varna
+- Predlogi za izboljšanje gesla
+- Gumb za prikaz/skritje gesla
+- Podpora za slovenski jezik 🇸🇮
 
-## Technologies Used
-- Python & Flask
-- JavaScript (with zxcvbn.js)
-- HTML/CSS
-- Deployable on Render.com or other cloud platforms
+## Zahtevane Python knjižnice
+- Flask
+- gunicorn
 
-## How to Run
+## Zagon lokalno
 ```bash
 pip install -r requirements.txt
 python app.py
