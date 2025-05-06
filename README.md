@@ -20,3 +20,6 @@ Web application that helps you analyze how strong your password is and how long 
 ```bash
 pip install -r requirements.txt
 python app.py
+
+**## Preview**
+![image](https://github.com/user-attachments/assets/d7512e5d-78ff-4e66-a5ef-7bd06f09eb77)
