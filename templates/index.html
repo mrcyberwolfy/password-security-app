@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Security Checker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='zxcvbn.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+<body>
+    <div class="container">
+        <img src="{{ url_for('static', filename='images.png') }}" alt="Password Security App" class="logo">
+
+        <h1>Koliko časa bi heker potreboval, da razbije vaše geslo? 🔒</h1>
+        <h3>Dobrodošli v programu za preverjanje varnosti gesel!</h3>
+        <p>
+            Ta spletna aplikacija vam omogoča, da hitro in enostavno preverite, kako varno je vaše geslo.
+            Uporablja napredno analizo, ki oceni moč gesla glede na dolžino, kompleksnost in pogoste vzorce, ki jih napadalci uporabljajo.
+            </p>
+            <p>
+            Ob vnosu gesla vam aplikacija v realnem času prikaže število znakov, vrsto uporabljenih znakov ter približen čas, ki bi ga potreboval heker za razbitje gesla.
+            Na koncu prejmete tudi jasne predloge, kako svoje geslo še izboljšati.
+            </p>
+
+        <form method="POST" action="/" id="passwordForm">
+            <label for="password">Vpišite vaše geslo:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="button" onclick="generateAndFillPassword()">🔄 Ustvari močno geslo</button>
+            <button type="button" id="toggleVisibility" onclick="togglePasswordVisibility()">👁️ Pokaži geslo</button>
+
+            <div class="strength-bar">
+                <div id="strengthBar"></div>
+            </div>
+
+            <div class="password-feedback">
+                <p id="charCount">Število znakov: 0</p>
+                <p id="lowercaseCount">Male črke: 0</p>
+                <p id="uppercaseCount">Velike črke: 0</p>
+                <p id="numberCount">Številke: 0</p>
+                <p id="specialCharCount">Posebni znaki: 0</p>
+            </div>
+
+            <input type="hidden" id="zxcvbn_result" name="zxcvbn_result">
+            <button type="submit" id="submitButton">✅ Preveri moje geslo zdaj</button>
+        </form>
+
+        <div id="analysisSection" style="display: none;">
+            <p><b>Ocena varnosti vašega gesla:</b> <span id="passwordRating">-</span></p>
+            <p><b>Čas za razbitje gesla:</b> <span id="crackTime">-</span></p>
+            <div id="suggestions">
+                <b>Predlogi za izboljšanje gesla:</b>
+                <ul id="suggestionList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('passwordForm').onsubmit = function(event) {
+            event.preventDefault();
+
+            const password = document.getElementById('password').value;
+            const result = zxcvbn(password);
+
+            const scoreMap = [
+                { label: '🔴 Zelo šibko', crack: 'manj kot 10 sekund' },
+                { label: '🟠 Šibko', crack: 'nekaj minut' },
+                { label: '🟡 Zmerno', crack: 'nekaj ur' },
+                { label: '🟢 Dobro', crack: 'nekaj dni' },
+                { label: '💪 Zelo močno', crack: 'mesece ali leta' }
+            ];
+
+            // ✅ Corrected line to update UI
+            document.getElementById('passwordRating').textContent = scoreMap[result.score].label;
+            document.getElementById('crackTime').textContent = result.crack_times_display.offline_slow_hashing_1e4_per_second;
+
+            const analysis = {
+                lower: (password.match(/[a-z]/g) || []).length,
+                upper: (password.match(/[A-Z]/g) || []).length,
+                number: (password.match(/[0-9]/g) || []).length,
+                special: (password.match(/[^a-zA-Z0-9]/g) || []).length,
+                length: password.length
+            };
+
+            const suggestionList = document.getElementById('suggestionList');
+            suggestionList.innerHTML = '';
+
+            if (analysis.lower === 0 || analysis.upper === 0 || analysis.number === 0 || analysis.special === 0) {
+                const li = document.createElement('li');
+                li.innerText = 'Geslo naj vsebuje velike in male črke, posebne znake in številke';
+                suggestionList.appendChild(li);
+            }
+
+            if (analysis.length < 16) {
+                const li = document.createElement('li');
+                li.innerText = 'Geslo mora vsebovati vsaj 16 znakov';
+                suggestionList.appendChild(li);
+            }
+
+            [
+                'Ne uporabljajte enakih gesel za vaše račune',
+                'Vedno uporabljajte različna varna gesla',
+                'Uporabljajte Password Manager program kot je npr. Bitwarden',
+                'Geslo je samo vaše in ga ne zaupajte nikomur'
+            ].forEach(text => {
+                const li = document.createElement('li');
+                li.innerText = text;
+                suggestionList.appendChild(li);
+            });
+
+            document.getElementById('zxcvbn_result').value = JSON.stringify(result);
+            document.getElementById('analysisSection').style.display = 'block';
+        };
+    </script>
+</body>
+<footer style="text-align:center; margin-top: 40px; font-size: 14px; color: #777;">
+    <p>🔐 Ta program ne shranjuje vaših gesel v izvirni obliki. Vsi vnosi se obdelujejo lokalno in varno.</p>
+    <p>Projekt razvija  <a href="https://davidvolk.si" target="_blank"><b>davidvolk.si</b>
+</footer>
+</html>
